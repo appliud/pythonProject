@@ -1,16 +1,12 @@
-import os
 import time
-
 import matplotlib
 import tensorflow as tf
 from sklearn import datasets
 import numpy as np
 import matplotlib.pyplot as plt
-
 matplotlib.use('TkAgg')
-if not os.path.exists('./img'):
-    os.makedirs('./img')
 
+# 导入数据，分别为输入特征和标签
 x_data = datasets.load_iris().data
 y_data = datasets.load_iris().target
 
@@ -36,32 +32,31 @@ train_db = tf.data.Dataset.from_tensor_slices((x_train, y_train)).batch(32)
 test_db = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(32)
 
 # 生成神经网络的参数
-w1 = tf.Variable(tf.random.truncated_normal([4, 3], stddev=0.1, seed=1))
-b1 = tf.Variable(tf.random.truncated_normal([3], stddev=0.1, seed=1))
+w1_sgdm = tf.Variable(tf.random.truncated_normal([4, 3], stddev=0.1, seed=1))
+b1_sgdm = tf.Variable(tf.random.truncated_normal([3], stddev=0.1, seed=1))
 
 lr = 0.1  # 学习率为0.1
 epochs = 500  # 循环轮数
 
+
 # 生成新的神经网络参数
-w1_adagrad = tf.Variable(tf.random.truncated_normal([4, 3], stddev=0.1, seed=1))
-b1_adagrad = tf.Variable(tf.random.truncated_normal([3], stddev=0.1, seed=1))
+w1_sgdm = tf.Variable(tf.random.truncated_normal([4, 3], stddev=0.1, seed=1))
+b1_sgdm = tf.Variable(tf.random.truncated_normal([3], stddev=0.1, seed=1))
 
+def sgdm_optimizer(w, b, grads, lr, m_w, m_b, beta=0.9):
+    m_w = beta * m_w + (1 - beta) * grads[0]
+    m_b = beta * m_b + (1 - beta) * grads[1]
+    w.assign_sub(lr * m_w)
+    b.assign_sub(lr * m_b)
+    return m_w, m_b
 
-def adagrad_optimizer(w, b, grads, lr, g_w_sum, g_b_sum):
-    g_w_sum += tf.square(grads[0])
-    g_b_sum += tf.square(grads[1])
-    w.assign_sub(lr / tf.sqrt(g_w_sum + 1e-7) * grads[0])
-    b.assign_sub(lr / tf.sqrt(g_b_sum + 1e-7) * grads[1])
-    return g_w_sum, g_b_sum
-
-
-# 训练Adagrad优化器
-print("Training with Adagrad...")
+# 训练SGDM优化器
+print("Training with SGDM...")
 start_time = time.time()
 
-g_w_sum, g_b_sum = 0, 0
-losses_adagrad = []
-accuracies_adagrad = []
+m_w, m_b = 0, 0
+losses_sgdm = []
+accuracies_sgdm = []
 
 for epoch in range(epochs):
     epoch_loss = 0
@@ -69,47 +64,44 @@ for epoch in range(epochs):
 
     for step, (x_batch_train, y_batch_train) in enumerate(train_db):
         with tf.GradientTape() as tape:
-            y = tf.matmul(x_batch_train, w1_adagrad) + b1_adagrad
+            y = tf.matmul(x_batch_train, w1_sgdm) + b1_sgdm
             y = tf.nn.softmax(y)
             y_ = tf.one_hot(y_batch_train, depth=3)
             loss = tf.reduce_mean(tf.square(y_ - y))
 
-        grads = tape.gradient(loss, [w1_adagrad, b1_adagrad])
+        grads = tape.gradient(loss, [w1_sgdm, b1_sgdm])
         epoch_loss += float(loss)
 
         predictions = tf.argmax(y, axis=1)
         predictions = tf.cast(predictions, dtype=y_batch_train.dtype)
         correct_predictions += tf.reduce_sum(tf.cast(tf.equal(predictions, y_batch_train), tf.float32))
 
-        g_w_sum, g_b_sum = adagrad_optimizer(w1_adagrad, b1_adagrad, grads, lr, g_w_sum, g_b_sum)
+        m_w, m_b = sgdm_optimizer(w1_sgdm, b1_sgdm, grads, lr, m_w, m_b)
 
     avg_epoch_loss = epoch_loss / (step + 1)
     accuracy = correct_predictions / len(y_train)
 
-    losses_adagrad.append(avg_epoch_loss)
-    accuracies_adagrad.append(float(accuracy))
+    losses_sgdm.append(avg_epoch_loss)
+    accuracies_sgdm.append(float(accuracy))
 
     if epoch % 50 == 0:
-        print(f'Adagrad Epoch {epoch}, Loss: {avg_epoch_loss:.4f}, Accuracy: {float(accuracy):.4f}')
+        print(f'SGDM Epoch {epoch}, Loss: {avg_epoch_loss:.4f}, Accuracy: {float(accuracy):.4f}')
 
 end_time = time.time()
-training_time_adagrad = end_time - start_time
-print(f"Adagrad Training completed in {training_time_adagrad:.2f} seconds.")
-
-# 获取当前时间，并替换冒号为下划线
+training_time_sgdm = end_time - start_time
+print(f"SGDM Training completed in {training_time_sgdm:.2f} seconds.")
 current_time = time.strftime("%Y-%m-%d %H-%M-%S", time.localtime())
 
-# 将training_time_adagrad保存到txt文件里面，换行写入
-with open('./img/time.txt', 'a') as f:
-    f.write(f"\n{current_time} Adagrad Training completed in {training_time_adagrad:.2f} seconds.")
-
+# 将training_time_sgdm保存到txt文件里面，换行写入
+with open('img/time.txt', 'a') as f:
+    f.write(f"\n{current_time} SGDM Training completed in {training_time_sgdm:.2f} seconds.")
 
 # 绘制损失和准确率曲线
 plt.figure(figsize=(10, 5))
 
 # 绘制损失曲线
 plt.subplot(1, 2, 1)
-plt.plot(losses_adagrad, label='Adagrad Loss')
+plt.plot(losses_sgdm, label='SGDM Loss')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.title('Loss Curve')
@@ -117,13 +109,13 @@ plt.legend()
 
 # 绘制准确率曲线
 plt.subplot(1, 2, 2)
-plt.plot(accuracies_adagrad, label='Adagrad Accuracy')
+plt.plot(accuracies_sgdm, label='SGDM Accuracy')
 plt.xlabel('Epoch')
 plt.ylabel('Accuracy')
 plt.title('Accuracy Curve')
 plt.legend()
 
 # 保存图像
-plt.savefig('./img/adagrad_results_'+current_time+'.png')
+plt.savefig('./img/sgdm_results_'+current_time+'.png')
 
 plt.show()

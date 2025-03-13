@@ -81,7 +81,7 @@ print(f"Adam Training completed in {total_time:.2f} seconds.")
 current_time = time.strftime("%Y%m%d_%H%M%S", time.localtime())
 
 # 将训练时间保存到txt文件里面
-with open('./img/time.txt', 'a') as f:
+with open('img/time.txt', 'a') as f:
     f.write(f"\n{current_time} adma Training completed in {total_time:.2f} seconds.")
 
 # 绘制损失和准确率曲线

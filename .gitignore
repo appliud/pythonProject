@@ -7,7 +7,7 @@
 *.png
 out
 gen
-!/wrr/xxx/tf/sy/1/
-!/wrr/xxx/tf/sy/txt/
+!/wrr/tf/sy/1/
+!/wrr/tf/sy/txt/
 !.png
 

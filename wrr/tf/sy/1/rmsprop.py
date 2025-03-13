@@ -90,7 +90,7 @@ print(f"RMSProp Training completed in {training_time_rmsprop:.2f} seconds.")
 current_time = time.strftime("%Y-%m-%d %H-%M-%S", time.localtime())
 
 # 将training_time_rmsprop保存到txt文件里面，换行写入
-with open('./img/time.txt', 'a') as f:
+with open('img/time.txt', 'a') as f:
     f.write(f"\n{current_time} RMSProp Training completed in {training_time_rmsprop:.2f} seconds.")
 
 # 绘制损失和准确率曲线
