@@ -1,0 +1,13 @@
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+*.png
+out
+gen
+!/wrr/xxx/tf/sy/1/
+!/wrr/xxx/tf/sy/txt/
+!.png
+

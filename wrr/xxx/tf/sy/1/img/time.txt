@@ -1,0 +1,20 @@
+2025-03-13 20-34-21 Adagrad Training completed in 13.86 seconds.
+2025-03-13 20-35-36 Adagrad Training completed in 12.90 seconds.
+2025-03-13 20-37-27 Adagrad Training completed in 13.07 seconds.
+
+2025-03-13 20-43-18 SGD Training completed in 6.42 seconds.
+2025-03-13 20-44-10 SGD Training completed in 6.23 seconds.
+2025-03-13 20-45-59 SGDM Training completed in 6.83 seconds.
+2025-03-13 20-46-54 RMSProp Training completed in 6.54 seconds.
+2025-03-13 20-48-11 Adam Training completed in 7.62 seconds.
+2025-03-13 20-49-17 Adam Training completed in 7.80 seconds.
+2025-03-13 20-53-43 Adam Training completed in 18.19 seconds.
+2025-03-13 20-57-00 Adam Training completed in 21.76 seconds.
+2025-03-13 21-06-56 RMSProp Training completed in 8.31 seconds.
+2025-03-13 21-07-27 RMSProp Training completed in 8.99 seconds.
+20250313_211707 adma Training completed in 15.29 seconds.
+2025-03-13 21-18-53 Adagrad Training completed in 6.27 seconds.
+20250313_211917 adma Training completed in 15.20 seconds.
+2025-03-13 21-19-34 RMSProp Training completed in 8.40 seconds.
+2025-03-13 21-20-03 SGD Training completed in 6.05 seconds.
+2025-03-13 21-20-18 SGDM Training completed in 6.39 seconds.
